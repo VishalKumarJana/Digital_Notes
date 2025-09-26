@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { useEffect } from "react";
-import api from "../services/api";
+import api from "../redux-store/services/api";
 import toast from "react-hot-toast";
 
 const ContextApi = createContext();
@@ -25,12 +25,9 @@ export const ContextProvider = ({ children }) => {
   //check the loggedin user is admin or not
   const [isAdmin, setIsAdmin] = useState(isADmin);
 
-  const fetchUser = async () => {
-    const user = JSON.parse(localStorage.getItem("USER"));
-
-    if (user?.username) {
+  const fetchUser = async (token) => {
       try {
-        const { data } = await api.get(`/auth/private/user`);
+        const { data } = await api.get(`/auth/getTokenDetails?token=${token}`);
         const roles = data.roles;
 
         if (roles.includes("ROLE_DELEGATE") || roles.includes("ROLE_ADMIN")) {
@@ -45,15 +42,14 @@ export const ContextProvider = ({ children }) => {
         console.error("Error fetching current user", error);
         toast.error("Error fetching current user");
       }
-    }
   };
 
-  //if  token exist fetch the current user
-  useEffect(() => {
-    if (token) {
-      fetchUser();
-    }
-  }, [token]);
+  // //if  token exist fetch the current user
+  // useEffect(() => {
+  //   if (token) {
+  //     fetchUser();
+  //   }
+  // }, [token]);
 
   //through context provider you are sending all the datas so that we access at anywhere in your application
   return (

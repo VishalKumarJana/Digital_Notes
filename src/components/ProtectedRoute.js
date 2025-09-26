@@ -1,10 +1,10 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useMyContext } from "../store/ContextApi";
+import { useSelector } from "react-redux";
 
 const ProtectedRoute = ({ children, adminPage }) => {
   // Access the token and isAdmin state by using the useMyContext hook from the ContextProvider
-  const { token, isAdmin } = useMyContext();
+  const { token, isAdmin } = useSelector((state) => state.auth);
 
   //navigate to login page to an unauthenticated
   if (!token) {

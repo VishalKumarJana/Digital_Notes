@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../../services/api";
+import api from "../../redux-store/services/api";
 import "react-quill/dist/quill.snow.css";
 import { Blocks } from "react-loader-spinner";
 import ReactQuill from "react-quill";
@@ -51,7 +51,7 @@ const NoteDetails = () => {
 
   const checkAdminRole = async () => {
     try {
-      const response = await api.get("/auth/private/user"); // Adjust the endpoint as necessary to get user info
+      const response = await api.get("/auth/getTokenDetails"); // Adjust the endpoint as necessary to get user info
       const roles = response.data.roles;
       if (roles.includes("ROLE_ADMIN")) {
         setIsAdmin(true);

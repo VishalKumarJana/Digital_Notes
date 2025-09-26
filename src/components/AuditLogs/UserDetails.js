@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import api from "../../services/api";
+import api from "../../redux-store/services/api";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField/InputField";
 import { Blocks } from "react-loader-spinner";

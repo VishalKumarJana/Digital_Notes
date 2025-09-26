@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Buttons from "../utils/Buttons";
 import { motion } from "framer-motion";
 import Brands from "./LandingPageCom/Brands/Brands";
 import State from "./LandingPageCom/State";
 import Testimonial from "./LandingPageCom/Testimonial/Testimonial";
-import { useMyContext } from "../store/ContextApi";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../redux-store/services/authService";
+import { setCurrentUser, setIsAdmin } from "../redux-store/actions/authAction";
 
 const fadeInFromTop = {
   hidden: { opacity: 0, y: -50 },
@@ -16,9 +18,25 @@ const fadeInFromBotom = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+
+
 const LandingPage = () => {
   // Access the token  state by using the useMyContext hook from the ContextProvider
-  const { token } = useMyContext();
+  const token = useSelector((state) => state.auth.token);
+
+    const state = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+  console.log(token);
+
+  console.log(state);
+  
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchUser(token));
+    }
+  }, [token]);
 
   return (
     <div className="min-h-[calc(100vh-74px)] flex justify-center">

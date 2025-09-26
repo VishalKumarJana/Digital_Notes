@@ -1,28 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { IoMenu } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
-import { useMyContext } from "../store/ContextApi";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, setCurrentUser, setIsAdmin, setToken, startUserLogout } from "../redux-store/actions/authAction";
+import { use } from "react";
+import { fetchUserFromToken } from "../redux-store/services/authService";
 
 const Navbar = () => {
-  //handle the header opening and closing menu for the tablet/mobile device
   const [headerToggle, setHeaderToggle] = useState(false);
   const pathName = useLocation().pathname;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const isAdmin = useSelector((state) => state.auth.isAdmin);
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
-  // Access the states by using the useMyContext hook from the ContextProvider
-  const { token, setToken, setCurrentUser, isAdmin, setIsAdmin } =
-    useMyContext();
+  const state = useSelector((state) => state);
+  console.log("Redux State in Navbar:", state);
+
+  const redirect = () => {
+    navigate("/login");
+  };
 
   const handleLogout = () => {
-    localStorage.removeItem("JWT_TOKEN"); // Updated to remove token from localStorage
-    localStorage.removeItem("USER"); // Remove user details as well
-    localStorage.removeItem("CSRF_TOKEN");
-    localStorage.removeItem("IS_ADMIN");
-    setToken(null);
-    setCurrentUser(null);
-    setIsAdmin(false);
     navigate("/login");
+    dispatch(setToken(null));
+    dispatch(setCurrentUser(null));
+    dispatch(setIsAdmin(false));
+    dispatch(startUserLogout(redirect));
   };
 
   return (
@@ -33,28 +39,25 @@ const Navbar = () => {
           <h3 className=" font-dancingScript text-logoText">Secure Notes</h3>
         </Link>
         <ul
-          className={`lg:static  absolute left-0  top-16 w-full lg:w-fit lg:px-0 sm:px-10 px-4  lg:bg-transparent bg-headerColor   ${
-            headerToggle
-              ? "min-h-fit max-h-navbarHeight lg:py-0 py-4 shadow-md shadow-slate-700 lg:shadow-none"
-              : "h-0 overflow-hidden "
-          }  lg:h-auto transition-all duration-100 font-montserrat text-textColor flex lg:flex-row flex-col lg:gap-8 gap-2`}
+          className={`lg:static  absolute left-0  top-16 w-full lg:w-fit lg:px-0 sm:px-10 px-4  lg:bg-transparent bg-headerColor   ${headerToggle
+            ? "min-h-fit max-h-navbarHeight lg:py-0 py-4 shadow-md shadow-slate-700 lg:shadow-none"
+            : "h-0 overflow-hidden "
+            }  lg:h-auto transition-all duration-100 font-montserrat text-textColor flex lg:flex-row flex-col lg:gap-8 gap-2`}
         >
           {token && (
             <>
               <Link to="/notes">
                 <li
-                  className={` ${
-                    pathName === "/notes" ? "font-semibold " : ""
-                  } py-2 cursor-pointer  hover:text-slate-300 `}
+                  className={` ${pathName === "/notes" ? "font-semibold " : ""
+                    } py-2 cursor-pointer  hover:text-slate-300 `}
                 >
                   My Notes
                 </li>
               </Link>
               <Link to="/create-note">
                 <li
-                  className={` py-2 cursor-pointer  hover:text-slate-300 ${
-                    pathName === "/create-note" ? "font-semibold " : ""
-                  } `}
+                  className={` py-2 cursor-pointer  hover:text-slate-300 ${pathName === "/create-note" ? "font-semibold " : ""
+                    } `}
                 >
                   Create Note
                 </li>
@@ -64,9 +67,8 @@ const Navbar = () => {
 
           <Link to="/contact">
             <li
-              className={`${
-                pathName === "/contact" ? "font-semibold " : ""
-              } py-2 cursor-pointer hover:text-slate-300`}
+              className={`${pathName === "/contact" ? "font-semibold " : ""
+                } py-2 cursor-pointer hover:text-slate-300`}
             >
               Contact
             </li>
@@ -74,9 +76,8 @@ const Navbar = () => {
 
           <Link to="/about">
             <li
-              className={`py-2 cursor-pointer hover:text-slate-300 ${
-                pathName === "/about" ? "font-semibold " : ""
-              }`}
+              className={`py-2 cursor-pointer hover:text-slate-300 ${pathName === "/about" ? "font-semibold " : ""
+                }`}
             >
               About
             </li>
@@ -86,9 +87,8 @@ const Navbar = () => {
             <>
               <Link to="/profile">
                 <li
-                  className={` py-2 cursor-pointer  hover:text-slate-300 ${
-                    pathName === "/profile" ? "font-semibold " : ""
-                  }`}
+                  className={` py-2 cursor-pointer  hover:text-slate-300 ${pathName === "/profile" ? "font-semibold " : ""
+                    }`}
                 >
                   Profile
                 </li>
@@ -96,9 +96,8 @@ const Navbar = () => {
               {isAdmin && (
                 <Link to="/admin/users">
                   <li
-                    className={` py-2 cursor-pointer uppercase   hover:text-slate-300 ${
-                      pathName.startsWith("/admin") ? "font-semibold " : ""
-                    }`}
+                    className={` py-2 cursor-pointer uppercase   hover:text-slate-300 ${pathName.startsWith("/admin") ? "font-semibold " : ""
+                      }`}
                   >
                     Admin
                   </li>

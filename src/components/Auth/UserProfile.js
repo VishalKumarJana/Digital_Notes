@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../services/api";
+import api from "../../redux-store/services/api";
 import { useMyContext } from "../../store/ContextApi";
 import Avatar from "@mui/material/Avatar";
 import Accordion from "@mui/material/Accordion";

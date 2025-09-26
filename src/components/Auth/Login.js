@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../../services/api";
+import api from "../../redux-store/services/api";
 import { jwtDecode } from "jwt-decode";
 import InputField from "../InputField/InputField";
 import { FcGoogle } from "react-icons/fc";
@@ -9,8 +9,9 @@ import { FaGithub } from "react-icons/fa";
 import Divider from "@mui/material/Divider";
 import Buttons from "../../utils/Buttons";
 import toast from "react-hot-toast";
-import { useMyContext } from "../../store/ContextApi";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken } from "../../redux-store/actions/authAction";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -19,8 +20,10 @@ const Login = () => {
   const [step, setStep] = useState(1);
   const [jwtToken, setJwtToken] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
   // Access the token and setToken function using the useMyContext hook from the ContextProvider
-  const { setToken, token } = useMyContext();
+  // const { setToken, token } = useMyContext();
   const navigate = useNavigate();
 
   //react hook form initialization
@@ -46,8 +49,8 @@ const Login = () => {
     localStorage.setItem("JWT_TOKEN", token);
     localStorage.setItem("USER", JSON.stringify(user));
 
-    //store the token on the context state  so that it can be shared any where in our application by context provider
-    setToken(token);
+    dispatch(setToken(token));
+    // setToken(token);
 
     navigate("/notes");
   };
